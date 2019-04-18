@@ -1,0 +1,9 @@
+https://www.bbsmax.com/A/x9J2oQnN56/
+
+https://github.com/harrycresswell/hugolia
+
+https://forestry.io/blog/search-with-algolia-in-hugo/#4-sending-your-search-index-to-algolia
+
+https://code.luasoftware.com/tutorials/algolia/add-algolia-search-to-hugo-static-website/
+
+https://segmentfault.com/q/1010000012930521
