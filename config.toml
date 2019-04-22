@@ -47,15 +47,15 @@ enableEmoji = true
         name = "Posts"
         url = "/posts"
         
-[outputs]
-home = ["HTML", "RSS", "Algolia"]
+  [outputFormats.Algolia]
+    baseName = "algolia"
+    isPlainText = true
+    mediaType = "application/json"
+    notAlternative = true
+ 
+  [params.algolia]
+    vars = ["title", "content", "date", "publishdate", "description", "permalink", "thumbnail"]
+    params = ["tags"]      
 
-[outputFormats.Algolia]
-baseName = "algolia"
-isPlainText = true
-mediaType = "application/json"
-notAlternative = true
-
-[params.algolia]
-vars = ["title", "summary", "date", "publishdate", "expirydate", "permalink"]
-params = ["categories", "tags"]        
+  [outputs]
+    home = ["HTML", "RSS", "Algolia"]

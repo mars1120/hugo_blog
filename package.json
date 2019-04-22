@@ -1,5 +1,5 @@
 {
-  "name": "mblog",
+  "name": "marsblog",
   "version": "1.0.0",
   "description": "blog",
   "main": "index.js",
@@ -9,7 +9,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"algolia": "atomic-algolia"  
+    "algolia": "atomic-algolia"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,36 @@
 {{/* Generates a valid Algolia search index */}}
-{{- $.Scratch.Add "index" slice -}}
+{{- $hits := slice -}}
 {{- $section := $.Site.GetPage "section" .Section }}
-{{- range .Site.AllPages -}}
-  {{- if or (and (.IsDescendant $section) (and (not .Draft) (not .Params.private))) $section.IsHome -}}
-    {{- $.Scratch.Add "index" (dict "objectID" .UniqueID "date" .Date.UTC.Unix "description" .Description "dir" .Dir "expirydate" .ExpiryDate.UTC.Unix "fuzzywordcount" .FuzzyWordCount "keywords" .Keywords "kind" .Kind "lang" .Lang "lastmod" .Lastmod.UTC.Unix "permalink" .Permalink "publishdate" .PublishDate "readingtime" .ReadingTime "relpermalink" .RelPermalink "summary" .Summary "title" .Title "type" .Type "url" .URL "weight" .Weight "wordcount" .WordCount "section" .Section "tags" .Params.Tags "categories" .Params.Categories "authors" .Params.Authors)}}
+{{- $validVars := $.Param "algolia.vars" | default slice -}}
+{{- $validParams := $.Param "algolia.params" | default slice -}}
+{{- range $i, $hit := where .Data.Pages "Section" "posts" -}}
+  {{- $dot := . -}}
+  {{- if or (and ($hit.IsDescendant $section) (and (not $hit.Draft) (not $hit.Params.private))) $section.IsHome -}}
+    {{/* Set the hit's objectID */}}
+    {{- .Scratch.SetInMap $hit.File.Path "objectID" $hit.UniqueID -}}
+    {{/* Store built-in page variables in iterable object */}}
+    {{- .Scratch.SetInMap "temp" "date" $hit.Date.UTC.Unix -}}
+    {{- .Scratch.SetInMap "temp" "publishdate" $hit.PublishDate -}}
+    {{- .Scratch.SetInMap "temp" "dateString" (substr $hit.PublishDate 0 10) -}}
+    {{- .Scratch.SetInMap "temp" "content" ($hit.Plain | truncate 2000) -}}
+    {{- .Scratch.SetInMap "temp" "title" $hit.Title -}}
+    {{- .Scratch.SetInMap "temp" "permalink" $hit.Permalink -}}
+    {{- .Scratch.SetInMap "temp" "description" $hit.Description -}}
+    {{- .Scratch.SetInMap "temp" "thumbnail" $hit.Params.thumbnail -}}
+ 
+    {{/* Include valid page vars */}}
+    {{- range $key, $param := (.Scratch.Get "temp") -}}
+      {{- if in $validVars $key -}}
+        {{- $dot.Scratch.SetInMap $hit.File.Path $key $param -}}
+      {{- end -}}
+    {{- end -}}
+    {{/* Include valid page params */}}
+    {{- range $key, $param := $hit.Params -}}
+      {{- if in $validParams $key -}}
+        {{- $dot.Scratch.SetInMap $hit.File.Path $key $param -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $.Scratch.SetInMap "hits" $hit.File.Path (.Scratch.Get $hit.File.Path) -}}
   {{- end -}}
 {{- end -}}
-{{- $.Scratch.Get "index" | jsonify -}}
+{{- jsonify ($.Scratch.GetSortedMapValues "hits") -}}
